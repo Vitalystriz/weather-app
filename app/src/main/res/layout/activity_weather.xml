@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:orientation="vertical"
+    android:background="@color/blue"
+    android:layout_height="match_parent"
+    tools:context=".Weather_activity">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="London"
+        android:gravity="center"
+        android:id="@+id/TvCity"
+        android:textSize="50sp"
+        android:textColorHint="@color/orange" />
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="10:20"
+        android:gravity="center"
+        android:id="@+id/TvTime"
+        android:textSize="50sp"
+        android:textColorHint="@color/orange" />
+
+    <ImageView
+        android:id="@+id/IvMain"
+        android:layout_width="match_parent"
+        android:layout_height="200dp"
+        android:src="@drawable/sunnycloudlyrainy" />
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center">
+
+        <TextView
+            android:id="@+id/TvTemp"
+            android:layout_width="wrap_content"
+            android:layout_height="80dp"
+            android:textSize="50dp"
+            android:text="14" />
+
+        <ImageView
+            android:id="@+id/IvTemp"
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:src="@drawable/celc"
+            android:layout_gravity="right" />
+        <TextView
+            android:id="@+id/TvHum"
+            android:layout_width="wrap_content"
+            android:layout_height="80dp"
+            android:textSize="50dp"
+            android:text="74" />
+
+        <ImageView
+            android:id="@+id/IvHum"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:src="@drawable/humidity"
+            android:layout_gravity="right" />
+
+    </LinearLayout>
+
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Overcast Clouds"
+        android:gravity="center"
+        android:id="@+id/TvDesc"
+        android:textSize="50sp"
+        android:textColorHint="@color/orange" />
+
+    <Button
+        android:id="@+id/btnBack"
+        android:layout_width="200dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:background="@drawable/rounded_corners"
+        android:gravity="center"
+        android:text="Back"
+        android:textAllCaps="false"
+        android:textSize="30dp"
+        app:backgroundTint="@null" />
+
+
+</LinearLayout>
