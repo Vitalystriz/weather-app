@@ -5,14 +5,15 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -24,10 +25,10 @@ public class Major_activity extends AppCompatActivity implements View.OnClickLis
     EditText etCity;
     Button btnSearch;
     String city;
-    static ArrayList<Saved_data> saved_data;
+    private ArrayList<Saved_data> saved_data;
     CityAdapter cityAdapter;
     ListView lv;
-    FirebaseDatabase db;
+    FirebaseAuth mAuth;
     DatabaseReference saved_dataRef;
 
     @Override
@@ -35,8 +36,10 @@ public class Major_activity extends AppCompatActivity implements View.OnClickLis
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_major);
         lv = findViewById(R.id.lv);
-        db = FirebaseDatabase.getInstance();
-        saved_dataRef = db.getReference("saved_data");
+        mAuth = FirebaseAuth.getInstance();
+        String uid = mAuth.getCurrentUser().getUid();
+
+        saved_dataRef = FirebaseDatabase.getInstance().getReference("users").child(uid);
 
         etCity = findViewById(R.id.etCity);
         btnSearch = findViewById(R.id.btnSearch);
@@ -55,21 +58,12 @@ public class Major_activity extends AppCompatActivity implements View.OnClickLis
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 saved_data = getSavedData(dataSnapshot);
-//                saved_data.clear();
-//
-//                for (DataSnapshot postSnapshot : dataSnapshot.getChildren()) {
-//                    Saved_data saved_data1 = postSnapshot.getValue(Saved_data.class);
-//                    if (saved_data1 != null) {
-//                        saved_data.add(saved_data1);
-//                    }
-//                }
+                Log.d("SavedData", saved_data.toString()); // Log the data for debugging
+
                 cityAdapter = new CityAdapter(Major_activity.this, 0, 0, saved_data);
                 lv.setAdapter(cityAdapter);
                 cityAdapter.notifyDataSetChanged();
-
             }
-
-
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
@@ -101,19 +95,24 @@ public class Major_activity extends AppCompatActivity implements View.OnClickLis
     public void onPointerCaptureChanged(boolean hasCapture) {
         super.onPointerCaptureChanged(hasCapture);
     }
-    public static ArrayList<Saved_data> getSavedData(DataSnapshot dataSnapshot) {
-        saved_data = new ArrayList<>();
 
-        if (dataSnapshot != null && dataSnapshot.getChildren() != null) {
-            for (DataSnapshot postSnapshot : dataSnapshot.getChildren()) {
+    public static ArrayList<Saved_data> getSavedData(DataSnapshot dataSnapshot) {
+        ArrayList<Saved_data> savedData = new ArrayList<>();
+
+        if (dataSnapshot != null && dataSnapshot.child("saved_data").exists()) {
+            DataSnapshot savedDataSnapshot = dataSnapshot.child("saved_data");
+
+            for (DataSnapshot postSnapshot : savedDataSnapshot.getChildren()) {
                 Saved_data saved_data1 = postSnapshot.getValue(Saved_data.class);
                 if (saved_data1 != null) {
-                    saved_data.add(saved_data1);
+                    savedData.add(saved_data1);
                 }
             }
         }
 
-        return saved_data;
+        return savedData;
     }
+
+
 
 }

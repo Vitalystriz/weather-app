@@ -59,6 +59,7 @@ public class Weather_activity extends AppCompatActivity implements View.OnClickL
         setContentView(R.layout.activity_weather);
         mAuth= FirebaseAuth.getInstance();
         findView();
+
         Intent intent = getIntent();
         if (intent != null) {
             // Update the class-level variable with the value from the Intent
@@ -175,44 +176,89 @@ public class Weather_activity extends AppCompatActivity implements View.OnClickL
 //        });
 //        finish();
 //    }
-    private void insertInDb(WeatherData weatherData) {
-    String cityName = weatherData.getCityName();
-    DatabaseReference saved_dataRef = FirebaseDatabase.getInstance().getReference("saved_data");
-    // Check if the city already exists in the database
-    saved_dataRef.orderByChild("city").equalTo(cityName).addListenerForSingleValueEvent(new ValueEventListener() {
-        @Override
-        public void onDataChange(DataSnapshot dataSnapshot) {
-            if (dataSnapshot.exists()) {
-                // City already exists, handle accordingly (show a message, etc.)
-                Toast.makeText(Weather_activity.this, "City already exists in the database", Toast.LENGTH_SHORT).show();
-            } else {
-                // City doesn't exist, proceed with inserting
-                Saved_data sd = new Saved_data();
-                sd.setCity(cityName);
+//    private void insertInDb(WeatherData weatherData) {
+//    String cityName = weatherData.getCityName();
+//    DatabaseReference saved_dataRef = FirebaseDatabase.getInstance().getReference("saved_data");
+//
+//    // Check if the city already exists in the database
+//    saved_dataRef.orderByChild("city").equalTo(cityName).addListenerForSingleValueEvent(new ValueEventListener() {
+//        @Override
+//        public void onDataChange(DataSnapshot dataSnapshot) {
+//            if (dataSnapshot.exists()) {
+//                // City already exists, handle accordingly (show a message, etc.)
+//                Toast.makeText(Weather_activity.this, "City already exists in the database", Toast.LENGTH_SHORT).show();
+//            } else {
+//                // City doesn't exist, proceed with inserting
+//                Saved_data sd = new Saved_data();
+//                sd.setCity(cityName);
+//
+//                DatabaseReference newSdRef = saved_dataRef.push();
+//                newSdRef.setValue(sd).addOnCompleteListener(new OnCompleteListener<Void>() {
+//                    @Override
+//                    public void onComplete(@NonNull Task<Void> task) {
+//                        if (task.isSuccessful()) {
+//                            // Post saved successfully
+//                            // You can add any additional logic here
+//                            finish();
+//                        } else {
+//                            // Handle the error
+//                            Toast.makeText(Weather_activity.this, "Failed to save city to the database", Toast.LENGTH_SHORT).show();
+//                        }
+//                    }
+//                });
+//            }
+//        }
+//
+//        @Override
+//        public void onCancelled(@NonNull DatabaseError error) {
+//            Toast.makeText(Weather_activity.this, "Failed to save city to the database", Toast.LENGTH_SHORT).show();
+//        }
+//    });
+//}
+        private void insertInDb(WeatherData weatherData) {
+            // Get the current user UID
+            String uid = mAuth.getCurrentUser().getUid();
 
-                DatabaseReference newSdRef = saved_dataRef.push();
-                newSdRef.setValue(sd).addOnCompleteListener(new OnCompleteListener<Void>() {
-                    @Override
-                    public void onComplete(@NonNull Task<Void> task) {
-                        if (task.isSuccessful()) {
-                            // Post saved successfully
-                            // You can add any additional logic here
-                            finish();
-                        } else {
-                            // Handle the error
-                            Toast.makeText(Weather_activity.this, "Failed to save city to the database", Toast.LENGTH_SHORT).show();
+            // Reference to the user's data node in the database
+            DatabaseReference userRef = FirebaseDatabase.getInstance().getReference("users").child(uid);
+
+            // Check if the city already exists for the user
+            userRef.child("saved_data").orderByChild("city").equalTo(weatherData.getCityName())
+                    .addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(DataSnapshot dataSnapshot) {
+                            if (dataSnapshot.exists()) {
+                                // City already exists for the user, handle accordingly
+                                Toast.makeText(Weather_activity.this, "City already exists in the user's database", Toast.LENGTH_SHORT).show();
+                            } else {
+                                // City doesn't exist, proceed with inserting
+                                Saved_data sd = new Saved_data();
+                                sd.setCity(weatherData.getCityName());
+
+                                DatabaseReference newSdRef = userRef.child("saved_data").push();
+                                newSdRef.setValue(sd).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                    @Override
+                                    public void onComplete(@NonNull Task<Void> task) {
+                                        if (task.isSuccessful()) {
+                                            // Data saved successfully for the user
+                                            // You can add any additional logic here
+                                            finish();
+                                        } else {
+                                            // Handle the error
+                                            Toast.makeText(Weather_activity.this, "Failed to save city to the user's database", Toast.LENGTH_SHORT).show();
+                                        }
+                                    }
+                                });
+                            }
                         }
-                    }
-                });
-            }
+
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError error) {
+                            Toast.makeText(Weather_activity.this, "Failed to save city to the user's database", Toast.LENGTH_SHORT).show();
+                        }
+                    });
         }
 
-        @Override
-        public void onCancelled(@NonNull DatabaseError error) {
-            Toast.makeText(Weather_activity.this, "Failed to save city to the database", Toast.LENGTH_SHORT).show();
-        }
-    });
-}
 
 
 

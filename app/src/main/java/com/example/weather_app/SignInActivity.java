@@ -3,6 +3,7 @@ package com.example.weather_app;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.annotation.SuppressLint;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -28,6 +29,7 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
         etPassword = findViewById(R.id.etPassword);
         submit = (Button) findViewById(R.id.btnSubmit);
         submit.setOnClickListener(this);
+
         mAuth= FirebaseAuth.getInstance();
     }
 
@@ -35,6 +37,7 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
     public void onClick(View view) {
         String email = etEmail.getText().toString();
         String password = etEmail.getText().toString();
+        Intent intent = getIntent();
         mAuth.signInWithEmailAndPassword(etEmail.getText().toString(), etPassword.getText().toString()).addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
             @Override
             public void onComplete(Task<AuthResult> task) {
